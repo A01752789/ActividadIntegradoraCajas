@@ -37,7 +37,9 @@ def getRobots():
     global warehouseModel
 
     if request.method == 'GET':
-        robotPositions = [{"id": str(obj.unique_id), "x": x, "y": 1, "z": z}
+        robotPositions = [{"id": str(obj.unique_id),
+                           "x": x, "y": 1, "z": z,
+                           "hasBox": obj.has_box}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Robot)]
         return jsonify({'positions': robotPositions})
