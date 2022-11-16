@@ -2,13 +2,19 @@ from flask import Flask, request, jsonify
 from warehouse import *
 
 # Size of the board:
-number_agents = 10
+number_agents = 1
 width = 28
 height = 28
 warehouseModel = None
 currentStep = 0
 
 app = Flask("Warehouse")
+
+
+@app.route('/', methods=['POST', 'GET'])
+def helloWorld():
+    if request.method == 'GET':
+        return jsonify({"message": "Connection with server was successful!"})
 
 
 @app.route('/init', methods=['POST', 'GET'])
@@ -21,8 +27,6 @@ def initModel():
         height = int(request.form.get('height'))
         currentStep = 0
 
-        print(request.form)
-        print(width, height)
         warehouseModel = WarehouseModel(width, height)
 
         return jsonify({"message": "Parameters received, model initiated."})
