@@ -11,11 +11,11 @@ def agent_portrayal(agent):
                  "Color": "red",
                  "r": 0.5}
 
-    if agent.live == 1:
+    if agent.color == 1:
         portrayal["Color"] = "blue"
         portrayal["Layer"] = 0
-    elif agent.live == 2:
-        portrayal["Color"] = "green"
+    elif agent.color == 2:
+        portrayal["Color"] = "red"
         portrayal["Layer"] = 0
     else:
         portrayal["Color"] = "grey"
@@ -30,7 +30,7 @@ alto = 15
 grid = CanvasGrid(agent_portrayal, ancho, alto, 750, 750)
 server = ModularServer(WarehouseModel,
                        [grid],
-                       "Game of Life Model",
+                       "Warehouse Model",
                        {"width": ancho, "height": alto})
 server.port = 8521
 server.launch()

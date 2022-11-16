@@ -9,9 +9,10 @@ import random
 class Robot(Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
+        # Agent variables
         self.type = 'robot'
-        self.live = 1
-        self.next_live = 1
+        self.color = 1
+        self.next_color = None
         self.has_box = False
         self.next_state = None
 
@@ -22,18 +23,15 @@ class Robot(Agent):
                 self.pos,
                 moore=False,
                 include_center=False)
-        # For every neighbor
         for neighbor in neighbors:
             # If neighbor is a pallet
             if neighbor in self.model.pallets:
                 neighbors_content.append(['pallet',
                                          self.model.pallets[neighbor],
                                          neighbor])
-            # If neighbor is not a pallet
             else:
                 # Content of each cell
                 content = self.model.grid.get_cell_list_contents(neighbor)
-
                 # Cell is not empty
                 if content:
                     # For every element in the cell
@@ -45,6 +43,7 @@ class Robot(Agent):
                         # If there is a box
                         elif object.type == 'box':
                             box = True
+                    # If there is a robot carrying a box
                     if robot and box:
                         neighbors_content.append(['robot-with-box', neighbor])
                     elif box:
@@ -56,24 +55,14 @@ class Robot(Agent):
                     neighbors_content.append(['empty', neighbor])
         return neighbors_content
 
-    def is_there_a_box(self, neighbors_content):
+    def can_drop_it(self, neighbors_content):
         for neighbor in neighbors_content:
-            if neighbor[0] == 'box' and neighbor[-1] not \
-                    in self.model.reserved_boxes:
-                self.model.reserved_boxes.append(neighbor[-1])
-                return neighbor
+            if neighbor[0] == 'pallet':
+                return neighbor[-1]
         return False
 
-    def move_without_box(self, neighbors_content):
-        random.shuffle(neighbors_content)
-        for neighbor in neighbors_content:
-            if neighbor[0] == 'empty' and neighbor[-1] not in \
-                    self.model.reserved_cells:
-                self.model.reserved_cells.append(neighbor[-1])
-                self.next_state = neighbor[-1]
-                return True
-        self.next_state = self.pos
-        return False
+    def drop_box(self, pallet):
+        self.model.pallets[pallet] += 1
 
     def closest_pallet(self, neighbor):
         x1, y1 = neighbor[-1]
@@ -98,33 +87,42 @@ class Robot(Agent):
         self.model.reserved_cells.append(min_distance[1])
         return min_distance[1]
 
-    def can_drop_it(self, neighbors_content):
+    def is_there_a_box(self, neighbors_content):
         for neighbor in neighbors_content:
-            if neighbor[0] == 'pallet':
-                return neighbor[-1]
+            if neighbor[0] == 'box' and neighbor[-1] not \
+                    in self.model.reserved_boxes:
+                self.model.reserved_boxes.append(neighbor[-1])
+                return neighbor
         return False
 
-    # TO-DO
+    def move_without_box(self, neighbors_content):
+        random.shuffle(neighbors_content)
+        for neighbor in neighbors_content:
+            if neighbor[0] == 'empty' and neighbor[-1] not in \
+                    self.model.reserved_cells:
+                self.model.reserved_cells.append(neighbor[-1])
+                self.next_state = neighbor[-1]
+                return True
+        self.next_state = self.pos
+        return False
+
     def pick_up_box(self, box):
         self.model.initial_boxes[box[-1]] = [self.unique_id, self.pos]
 
-    # TO-DO
-    def drop_box(self, pallet):
-        self.model.pallets[pallet] += 1
-
     def step(self):
-        # Get a list of max 4 neighbors per agent with the content (List / [])
+        # Get a list of neighbors with the content of each cell (List / [])
         neighbors_content = self.get_neighbors_content()
         if self.has_box:
             # Checks whether agent is beside a pallet (Coordinate / False)
             can_drop_it = self.can_drop_it(neighbors_content)
             if can_drop_it:
+                # Drop a box in a pallet
                 self.drop_box(can_drop_it)
                 self.next_state = self.pos
                 self.has_box = False
                 self.model.picked_boxes[self.unique_id] = can_drop_it
             else:
-                # TODO (Both)
+                # Move to a pallet
                 self.next_state = self.move_with_box(neighbors_content)
                 self.model.picked_boxes[self.unique_id] = self.next_state
         else:
@@ -140,14 +138,14 @@ class Robot(Agent):
                 self.move_without_box(neighbors_content)
 
         if self.has_box:
-            self.next_live = 2
+            self.next_color = 2
         else:
-            self.next_live = 1
+            self.next_color = 1
 
     def advance(self):
         self.model.reserved_cells = []
         self.model.reserved_boxes = []
-        self.live = self.next_live
+        self.color = self.next_color
         self.model.grid.move_agent(self, self.next_state)
 
 
@@ -155,8 +153,9 @@ class Robot(Agent):
 class Box(Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
+        # Agent variables
         self.type = 'box'
-        self.live = 0
+        self.color = 0
         self.not_move = False
         self.agent_details = None
         self.next_state = None
@@ -184,47 +183,56 @@ class Box(Agent):
         self.model.grid.move_agent(self, self.next_state)
 
 
+# Warehouse model
 class WarehouseModel(Model):
     def __init__(self, width, height):
+        # Standard variables
         self.grid = MultiGrid(width, height, False)
         self.schedule = SimultaneousActivation(self)
-        self.running = True  # Para la visualizacion usando navegador
-        self.occupied_cells = {}
-        self.reserved_cells = []
-        self.picked_boxes = {}
-        self.initial_boxes = {}
+        self.running = True
+
+        # Agent variables
         self.pallets = {(0, 0): 0,
                         (14, 14): 0,
                         (0, 14): 0,
                         (14, 0): 0}
+        self.picked_boxes = {}
+        self.reserved_cells = []
+        self.initial_boxes = {}
         self.reserved_boxes = []
 
         unique_id = 0
+        occupied_cells = {}
+        # Create robot agent
         for _ in range(5):
             robot = Robot((unique_id), self)
             while True:
+                # Choose random cell
                 x = self.random.randrange(self.grid.width)
                 y = self.random.randrange(self.grid.height)
-                if (x, y) not in self.occupied_cells and \
+                if (x, y) not in occupied_cells and \
                         (x, y) not in self.pallets:
                     self.grid.place_agent(robot, (x, y))
                     self.schedule.add(robot)
-                    self.occupied_cells[(x, y)] = True
+                    occupied_cells[(x, y)] = True
                     break
             unique_id += 1
 
+        # Create box agent
         for _ in range(20):
             box = Box((unique_id), self)
             while True:
+                # Choose random cell
                 x = self.random.randrange(self.grid.width)
                 y = self.random.randrange(self.grid.height)
-                if (x, y) not in self.occupied_cells and \
+                if (x, y) not in occupied_cells and \
                         (x, y) not in self.pallets:
                     self.grid.place_agent(box, (x, y))
                     self.schedule.add(box)
-                    self.occupied_cells[(x, y)] = True
+                    occupied_cells[(x, y)] = True
                     break
             unique_id += 1
 
     def step(self):
+        # Model step
         self.schedule.step()
