@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -432,14 +432,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca9777ad3a17b9343a54228e4a5d174f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pallet: {fileID: 5269993693129077334, guid: 17454c43d586f98419170ffbbbfa4b91, type: 3}
-  pallet1: {fileID: 2753079143234159893, guid: 1f5b598b73f0e1e4f84afeef2d9870c5, type: 3}
-  pallet2: {fileID: 5594283389464684107, guid: 216d5bca4cd8b0947838750761a91fdc, type: 3}
-  pallet3: {fileID: 7614517900811112173, guid: f15a77ec021f3e541ae7a83962b5d69a, type: 3}
-  pallet4: {fileID: 8969193293536263268, guid: 92d921b3a90d85f4e876003c2bc6b2b5, type: 3}
   pallet5: {fileID: 515177049362373711, guid: a897ebaabb7aadd4c96dcf431f1eb95e, type: 3}
-  robot: {fileID: 7285258184819388933, guid: 2b1e5944a121c484a8ea522886206150, type: 3}
-  robotCaja: {fileID: 7285258184819388933, guid: b3869b3fab4fe52469a58ce7365b1e70, type: 3}
+  robot: {fileID: 7285258184819388933, guid: b3869b3fab4fe52469a58ce7365b1e70, type: 3}
   caja: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
   floor: {fileID: 483773661}
   NAgents: 0
