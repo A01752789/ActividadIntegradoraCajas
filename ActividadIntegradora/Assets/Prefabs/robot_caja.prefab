@@ -487,8 +487,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1420803997278078864}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0, y: 10.56, z: 1.25}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
+  m_LocalPosition: {x: 0, y: 10.56, z: 1.25}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1802,7 +1802,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7086244576044105008}
   m_LocalRotation: {x: -0.5, y: -0.5, z: -0.4999999, w: 0.5000001}
-  m_LocalPosition: {x: -3.5834334, y: 0.75220746, z: -0.038597196}
+  m_LocalPosition: {x: -3.5834334, y: 0.75220776, z: -0.038597226}
   m_LocalScale: {x: 18.640455, y: 61.95403, z: 8.243334}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1868,7 +1868,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7949344913154042047}
-  - component: {fileID: 3215125456651179592}
   m_Layer: 0
   m_Name: robot_caja
   m_TagString: Untagged
@@ -1895,19 +1894,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3215125456651179592
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7285258184819388933}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 10, y: 8.5, z: 7}
-  m_Center: {x: 0, y: 3, z: 1}
 --- !u!1 &7394970590270354447
 GameObject:
   m_ObjectHideFlags: 0
@@ -2691,7 +2677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_LocalRotation.y
