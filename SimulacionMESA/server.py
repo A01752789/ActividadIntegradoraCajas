@@ -38,7 +38,7 @@ def getRobots():
 
     if request.method == 'GET':
         robotPositions = [{"id": str(obj.unique_id),
-                           "x": x, "y": 1, "z": z,
+                           "x": x, "y": 0, "z": z,
                            "hasBox": obj.has_box}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Robot)]
@@ -51,11 +51,26 @@ def getBoxes():
 
     if request.method == 'GET':
         boxesPositions = [{"id": str(obj.unique_id),
-                           "x": x, "y": 1, "z": z,
+                           "x": x, "y": 0, "z": z,
                            "picked_up": obj.picked_up}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Box)]
         return jsonify({'positions': boxesPositions})
+
+
+@app.route('/getPallets', methods=['GET'])
+def getPallets():
+    global warehouseModel
+
+    if request.method == 'GET':
+        palletsPositionsValues = []
+        for x, y in warehouseModel.pallets.keys():
+            palletsPositionsValues.append({"x": x,
+                                           "y": 0,
+                                           "z": y,
+                                           "value": warehouseModel.pallets[
+                                            (x, y)]})
+        return jsonify({'positions': palletsPositionsValues})
 
 
 @app.route('/update', methods=['GET'])
