@@ -77,7 +77,7 @@ public class AgentController : MonoBehaviour
     bool updated = false, started = false;
     bool startedBox = false; 
 
-    public GameObject pallet, pallet1, pallet2, pallet3, pallet4, pallet5, robot, robotCaja, caja, floor;
+    public GameObject pallet5, robot, caja, floor;
     public int NAgents, width, height;
     public float timeToUpdate = 5.0f;
     private float timer, dt;
