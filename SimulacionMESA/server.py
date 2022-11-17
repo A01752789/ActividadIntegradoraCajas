@@ -38,7 +38,7 @@ def getRobots():
 
     if request.method == 'GET':
         robotPositions = [{"id": str(obj.unique_id),
-                           "x": x, "y": 0.1682857, "z": z,
+                           "x": x, "y": 0, "z": z,
                            "hasBox": obj.has_box}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Robot)]
@@ -64,12 +64,15 @@ def getPallets():
 
     if request.method == 'GET':
         palletsPositionsValues = []
+        count = 0
         for x, y in warehouseModel.pallets.keys():
-            palletsPositionsValues.append({"x": x,
-                                           "y": 2.384186e-07,
+            palletsPositionsValues.append({"id": count,
+                                           "x": x,
+                                           "y": 0,
                                            "z": y,
                                            "value": warehouseModel.pallets[
                                             (x, y)]})
+            count += 1
         return jsonify({'positions': palletsPositionsValues})
 
 
