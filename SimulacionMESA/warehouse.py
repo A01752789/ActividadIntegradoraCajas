@@ -156,9 +156,11 @@ class Box(Agent):
         # Agent variables
         self.type = 'box'
         self.color = 0
+        self.next_color = 0
         self.not_move = False
         self.agent_details = None
         self.next_state = None
+        self.picked_up = False
 
     def step(self):
         if not self.not_move:
@@ -169,17 +171,28 @@ class Box(Agent):
                     self.model.picked_boxes[self.agent_details[0]] = \
                         self.agent_details[-1]
                     self.next_state = self.agent_details[-1]
+                    self.picked_up = True
                 else:
+                    self.picked_up = False
                     self.next_state = self.pos
             else:
+                self.picked_up = True
                 self.next_state = self.model.picked_boxes[self.agent_details
                                                           [0]]
                 if self.next_state in self.model.pallets:
+                    self.picked_up = False
                     self.not_move = True
         else:
+            self.picked_up = False
             self.next_state = self.pos
 
+        if self.picked_up:
+            self.next_color = 3
+        else:
+            self.next_color = 0
+
     def advance(self):
+        self.color = self.next_color
         self.model.grid.move_agent(self, self.next_state)
 
 

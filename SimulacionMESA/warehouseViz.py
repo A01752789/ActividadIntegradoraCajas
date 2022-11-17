@@ -17,6 +17,9 @@ def agent_portrayal(agent):
     elif agent.color == 2:
         portrayal["Color"] = "red"
         portrayal["Layer"] = 0
+    elif agent.color == 3:
+        portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
     else:
         portrayal["Color"] = "grey"
         portrayal["Layer"] = 1

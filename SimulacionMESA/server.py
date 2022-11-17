@@ -50,7 +50,9 @@ def getBoxes():
     global warehouseModel
 
     if request.method == 'GET':
-        boxesPositions = [{"id": str(obj.unique_id), "x": x, "y": 1, "z": z}
+        boxesPositions = [{"id": str(obj.unique_id),
+                           "x": x, "y": 1, "z": z,
+                           "picked_up": obj.picked_up}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Box)]
         return jsonify({'positions': boxesPositions})
