@@ -70,7 +70,7 @@ public class AgentController : MonoBehaviour
     BoxesData boxesData;
     Dictionary<string, GameObject> boxes;
     Dictionary<string, GameObject> robots;
-    Dictionary<string, Vector3> prevPositions, currPositions, prevBoxPositions, currBoxPositions;
+    Dictionary<string, Vector3> prevPositions, currPositions;
 
     bool updated = false, started = false;
 
@@ -87,8 +87,6 @@ public class AgentController : MonoBehaviour
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
-        prevBoxPositions = new Dictionary<string, Vector3>();
-        currBoxPositions = new Dictionary<string, Vector3>();
 
         boxes = new Dictionary<string, GameObject>();
         robots = new Dictionary<string, GameObject>();
@@ -128,7 +126,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetRobotsData());
-            StartCoroutine(GetBoxesData());
+            StartCoroutine(GetBoxData());
         }
     }
 
@@ -170,7 +168,7 @@ public class AgentController : MonoBehaviour
         }
     }
 
-    IEnumerator GetBoxesData() 
+    IEnumerator GetBoxData() 
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxesEndpoint);
         yield return www.SendWebRequest();
@@ -189,19 +187,19 @@ public class AgentController : MonoBehaviour
             }*/
             foreach (BoxData cajita in boxesData.positions)
             {
-                Vector3 newBoxPosition = new Vector3(cajita.x, cajita.y, cajita.z);
+                Vector3 newAgentPosition = new Vector3(cajita.x, cajita.y, cajita.z);
 
                 if (!started)
                 {
-                    prevBoxPositions[cajita.id] = newBoxPosition;
-                    boxes[cajita.id] = Instantiate(caja, newBoxPosition, Quaternion.identity);
+                    prevPositions[cajita.id] = newAgentPosition;
+                    boxes[cajita.id] = Instantiate(caja, newAgentPosition, Quaternion.identity);
                 }
                 else
                 {
-                    Vector3 currentBoxPosition = new Vector3();
-                    if (currBoxPositions.TryGetValue(cajita.id, out currentBoxPosition))
-                        prevBoxPositions[cajita.id] = currentBoxPosition;
-                    currBoxPositions[cajita.id] = newBoxPosition;
+                    Vector3 currentPosition = new Vector3();
+                    if (currPositions.TryGetValue(cajita.id, out currentPosition))
+                        prevPositions[cajita.id] = currentPosition;
+                    currPositions[cajita.id] = newAgentPosition;
                 }
             }
 
@@ -237,19 +235,6 @@ public class AgentController : MonoBehaviour
                 if(direction != Vector3.zero) robots[rob.Key].transform.rotation = Quaternion.LookRotation(direction);
             }
 
-            foreach (var cajita in currBoxPositions)
-            {
-                Vector3 currentBoxPosition = cajita.Value;
-                Vector3 previousBoxPosition = prevBoxPositions[cajita.Key];
-
-                Vector3 interpolated = Vector3.Lerp(previousBoxPosition, currentBoxPosition, dt);
-                Vector3 direction = currentBoxPosition - interpolated;
-
-                boxes[cajita.Key].transform.localPosition = interpolated;
-                if (direction != Vector3.zero) boxes[cajita.Key].transform.rotation = Quaternion.LookRotation(direction);
-            }
-
-
             // float t = (timer / timeToUpdate);
             // dt = t * t * ( 3f - 2f*t);
         }
@@ -265,7 +250,6 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetRobotsData());
-            StartCoroutine(GetBoxesData());
         }
     }
 }
