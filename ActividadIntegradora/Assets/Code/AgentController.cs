@@ -67,7 +67,7 @@ public class PalletData
     public float x, y, z;
     public int value;
 
-    public BoxData(string id, float x, float y, float z, int value)
+    public PalletData(string id, float x, float y, float z, int value)
     {
         this.id = id;
         this.x = x;
@@ -75,6 +75,14 @@ public class PalletData
         this.z = z;
         this.value = value;
     }
+}
+
+[Serializable]
+public class PalletsData
+{
+    public List<PalletData> positions;
+
+    public PalletsData() => this.positions = new List<PalletData>();
 }
 
 public class AgentController : MonoBehaviour
@@ -88,14 +96,16 @@ public class AgentController : MonoBehaviour
     string updateEndpoint = "/update";
     RobotsData robotsData;
     BoxesData boxesData;
+    PalletsData palletsData;
     Dictionary<string, GameObject> boxes;
     Dictionary<string, GameObject> robots;
+    Dictionary<string, GameObject> pallets;
     Dictionary<string, Vector3> prevPositions, currPositions;
 
     bool updated = false, started = false;
-    bool startedBox = false; 
+    bool startedBox = false, startedPallet = false; 
 
-    public GameObject pallet, pallet1, pallet2, pallet3, pallet4, pallet5, robot, robotCaja, caja, floor;
+    public GameObject pallet5, robot, caja, floor;
     public int NAgents, width, height;
     public float timeToUpdate = 5.0f;
     private float timer, dt;
@@ -105,12 +115,14 @@ public class AgentController : MonoBehaviour
     {
         robotsData = new RobotsData();
         boxesData = new BoxesData();
+        palletsData = new PalletsData();
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         boxes = new Dictionary<string, GameObject>();
         robots = new Dictionary<string, GameObject>();
+        pallets = new Dictionary<string, GameObject>();
 
         width = 15;
         height = 15;
@@ -148,6 +160,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetRobotsData());
             StartCoroutine(GetBoxesData());
+            StartCoroutine(GetPalletsData());
         }
     }
 
@@ -229,25 +242,21 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
-            boxesData = JsonUtility.FromJson<BoxesData>(www.downloadHandler.text);
+            palletsData = JsonUtility.FromJson<PalletsData>(www.downloadHandler.text);
 
-            Debug.Log(boxesData.positions);
-
-            foreach(BoxData cajita in boxesData.positions)
+            foreach(PalletData tarima in palletsData.positions)
             {
-                if (!startedBox)
+                if (!startedPallet)
                 {
-                    Vector3 boxPosition = new Vector3(cajita.x, cajita.y, cajita.z);
-                    boxes[cajita.id] = Instantiate(caja, boxPosition, Quaternion.identity);
+                    Vector3 palletPosition = new Vector3(tarima.x, tarima.y, tarima.z);
+                    pallets[tarima.id] = Instantiate(pallet5, palletPosition, Quaternion.identity);
                 }
                 else
                 {
-                    if(cajita.picked_up){
-                        boxes[cajita.id].SetActive(false);
-                    }
+                    
                 }
             }
-            if (!startedBox) startedBox = true;
+            if (!startedPallet) startedPallet = true;
         }
     }
 
@@ -291,6 +300,7 @@ public class AgentController : MonoBehaviour
         {
             StartCoroutine(GetRobotsData());
             StartCoroutine(GetBoxesData());
+            StartCoroutine(GetPalletsData());
         }
     }
 }
