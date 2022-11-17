@@ -40,13 +40,15 @@ public class BoxData
 {
     public string id;
     public float x, y, z;
+    public bool picked_up;
 
-    public BoxData(string id, float x, float y, float z)
+    public BoxData(string id, float x, float y, float z, bool picked_up)
     {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.picked_up = picked_up;
     }
 }
 
@@ -73,6 +75,7 @@ public class AgentController : MonoBehaviour
     Dictionary<string, Vector3> prevPositions, currPositions;
 
     bool updated = false, started = false;
+    bool startedBox = false; 
 
     public GameObject pallet, pallet1, pallet2, pallet3, pallet4, pallet5, robot, robotCaja, caja, floor;
     public int NAgents, width, height;
@@ -152,10 +155,10 @@ public class AgentController : MonoBehaviour
                 }
                 else
                 {
-                    /*if (rob.hasBox)
+                    if (rob.hasBox)
                     {
-
-                    }*/
+                        
+                    }
                     Vector3 currentPosition = new Vector3();
                     if (currPositions.TryGetValue(rob.id, out currentPosition))
                         prevPositions[rob.id] = currentPosition;
@@ -181,30 +184,21 @@ public class AgentController : MonoBehaviour
 
             Debug.Log(boxesData.positions);
 
-            /*foreach(BoxData cajita in boxesData.positions)
+            foreach(BoxData cajita in boxesData.positions)
             {
-                Instantiate(caja, new Vector3(cajita.x, cajita.y, cajita.z), Quaternion.identity);
-            }*/
-            foreach (BoxData cajita in boxesData.positions)
-            {
-                Vector3 newAgentPosition = new Vector3(cajita.x, cajita.y, cajita.z);
-
-                if (!started)
+                if (!startedBox)
                 {
-                    prevPositions[cajita.id] = newAgentPosition;
-                    boxes[cajita.id] = Instantiate(caja, newAgentPosition, Quaternion.identity);
+                    Vector3 boxPosition = new Vector3(cajita.x, cajita.y, cajita.z);
+                    boxes[cajita.id] = Instantiate(caja, boxPosition, Quaternion.identity);
                 }
                 else
                 {
-                    Vector3 currentPosition = new Vector3();
-                    if (currPositions.TryGetValue(cajita.id, out currentPosition))
-                        prevPositions[cajita.id] = currentPosition;
-                    currPositions[cajita.id] = newAgentPosition;
+                    if(cajita.picked_up){
+                        boxes[cajita.id].SetActive(false);
+                    }
                 }
             }
-
-            updated = true;
-            if (!started) started = true;
+            if (!startedBox) startedBox = true;
         }
     }
 
@@ -234,9 +228,6 @@ public class AgentController : MonoBehaviour
                 robots[rob.Key].transform.localPosition = interpolated;
                 if(direction != Vector3.zero) robots[rob.Key].transform.rotation = Quaternion.LookRotation(direction);
             }
-
-            // float t = (timer / timeToUpdate);
-            // dt = t * t * ( 3f - 2f*t);
         }
     }
 
@@ -250,6 +241,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetRobotsData());
+            StartCoroutine(GetBoxData());
         }
     }
 }
