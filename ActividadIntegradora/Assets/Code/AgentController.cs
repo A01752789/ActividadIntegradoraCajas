@@ -105,7 +105,7 @@ public class AgentController : MonoBehaviour
     bool updated = false, started = false;
     bool startedBox = false, startedPallet = false; 
 
-    public GameObject pallet5, robot, caja, floor;
+    public GameObject pallet, robot, caja, floor;
     public int NAgents, width, height;
     public float timeToUpdate = 5.0f;
     private float timer, dt;
@@ -186,9 +186,14 @@ public class AgentController : MonoBehaviour
                 }
                 else
                 {
+                    // Si tiene caja, cambiar prefab y quitar luz
                     if (rob.hasBox)
                     {
-                        
+                        robots[rob.id].GetComponent<ToggleBox>().AddBox();
+                    }
+                    else
+                    {
+                        robots[rob.id].GetComponent<ToggleBox>().RemoveBox();
                     }
                     Vector3 currentPosition = new Vector3();
                     if (currPositions.TryGetValue(rob.id, out currentPosition))
@@ -249,7 +254,7 @@ public class AgentController : MonoBehaviour
                 if (!startedPallet)
                 {
                     Vector3 palletPosition = new Vector3(tarima.x, tarima.y, tarima.z);
-                    pallets[tarima.id] = Instantiate(pallet5, palletPosition, Quaternion.identity);
+                    pallets[tarima.id] = Instantiate(pallet, palletPosition, Quaternion.identity);
                 }
                 else
                 {
