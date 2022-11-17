@@ -60,12 +60,30 @@ public class BoxesData
     public BoxesData() => this.positions = new List<BoxData>();
 }
 
+[Serializable]
+public class PalletData
+{
+    public string id;
+    public float x, y, z;
+    public int value;
+
+    public BoxData(string id, float x, float y, float z, int value)
+    {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.value = value;
+    }
+}
+
 public class AgentController : MonoBehaviour
 {
     // private string url = "https://agents.us-south.cf.appdomain.cloud/";
     string serverUrl = "http://localhost:8585";
     string getBoxesEndpoint = "/getBoxes";
     string getRobotsEndpoint = "/getRobots";
+    string getPalletsEndpoint = "/getPallets";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     RobotsData robotsData;
@@ -129,7 +147,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetRobotsData());
-            StartCoroutine(GetBoxData());
+            StartCoroutine(GetBoxesData());
         }
     }
 
@@ -171,9 +189,40 @@ public class AgentController : MonoBehaviour
         }
     }
 
-    IEnumerator GetBoxData() 
+    IEnumerator GetBoxesData() 
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxesEndpoint);
+        yield return www.SendWebRequest();
+ 
+        if (www.result != UnityWebRequest.Result.Success)
+            Debug.Log(www.error);
+        else 
+        {
+            boxesData = JsonUtility.FromJson<BoxesData>(www.downloadHandler.text);
+
+            Debug.Log(boxesData.positions);
+
+            foreach(BoxData cajita in boxesData.positions)
+            {
+                if (!startedBox)
+                {
+                    Vector3 boxPosition = new Vector3(cajita.x, cajita.y, cajita.z);
+                    boxes[cajita.id] = Instantiate(caja, boxPosition, Quaternion.identity);
+                }
+                else
+                {
+                    if(cajita.picked_up){
+                        boxes[cajita.id].SetActive(false);
+                    }
+                }
+            }
+            if (!startedBox) startedBox = true;
+        }
+    }
+
+    IEnumerator GetPalletsData() 
+    {
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getPalletsEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
@@ -241,7 +290,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetRobotsData());
-            StartCoroutine(GetBoxData());
+            StartCoroutine(GetBoxesData());
         }
     }
 }
