@@ -94,9 +94,9 @@ public class AgentController : MonoBehaviour
         width = 15;
         height = 15;
 
-        //floor.transform.localScale = new Vector3((float)width / 10, 1, (float)height / 10);
-        floor.transform.localScale = new Vector3(width, 1, height);
-        //floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 0, (float)height / 2 - 0.5f);
+        floor.transform.localScale = new Vector3((float)(width + 1) / 10, 1, (float)(height + 1) / 10);
+        //floor.transform.localScale = new Vector3(width, 1, height);
+        floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 0, (float)height / 2 - 0.5f);
 
         timer = timeToUpdate;
 
@@ -109,8 +109,8 @@ public class AgentController : MonoBehaviour
         WWWForm form = new WWWForm();
 
         form.AddField("NAgents", NAgents.ToString());
-        form.AddField("width", (width * 10).ToString());
-        form.AddField("height", (height * 10).ToString());
+        form.AddField("width", (width).ToString());
+        form.AddField("height", (height).ToString());
 
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -126,7 +126,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Configuration upload complete!");
             Debug.Log("Getting Agents positions");
             StartCoroutine(GetRobotsData());
-            // StartCoroutine(GetBoxData());
+            StartCoroutine(GetBoxData());
         }
     }
 
@@ -152,6 +152,10 @@ public class AgentController : MonoBehaviour
                 }
                 else
                 {
+                    /*if (rob.hasBox)
+                    {
+
+                    }*/
                     Vector3 currentPosition = new Vector3();
                     if (currPositions.TryGetValue(rob.id, out currentPosition))
                         prevPositions[rob.id] = currentPosition;
@@ -164,7 +168,7 @@ public class AgentController : MonoBehaviour
         }
     }
 
-    /* IEnumerator GetBoxData() 
+    IEnumerator GetBoxData() 
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getBoxesEndpoint);
         yield return www.SendWebRequest();
@@ -173,16 +177,36 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
-            boxData = JsonUtility.FromJson<RobotsData>(www.downloadHandler.text);
+            boxesData = JsonUtility.FromJson<BoxesData>(www.downloadHandler.text);
 
-            Debug.Log(obstacleData.positions);
+            Debug.Log(boxesData.positions);
 
-            foreach(AgentData obstacle in obstacleData.positions)
+            /*foreach(BoxData cajita in boxesData.positions)
             {
-                Instantiate(obstaclePrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
+                Instantiate(caja, new Vector3(cajita.x, cajita.y, cajita.z), Quaternion.identity);
+            }*/
+            foreach (BoxData cajita in boxesData.positions)
+            {
+                Vector3 newAgentPosition = new Vector3(cajita.x, cajita.y, cajita.z);
+
+                if (!started)
+                {
+                    prevPositions[cajita.id] = newAgentPosition;
+                    boxes[cajita.id] = Instantiate(caja, newAgentPosition, Quaternion.identity);
+                }
+                else
+                {
+                    Vector3 currentPosition = new Vector3();
+                    if (currPositions.TryGetValue(cajita.id, out currentPosition))
+                        prevPositions[cajita.id] = currentPosition;
+                    currPositions[cajita.id] = newAgentPosition;
+                }
             }
+
+            updated = true;
+            if (!started) started = true;
         }
-    } */
+    }
 
 
     private void Update() 
