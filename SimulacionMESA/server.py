@@ -64,12 +64,15 @@ def getPallets():
 
     if request.method == 'GET':
         palletsPositionsValues = []
+        count = 0
         for x, y in warehouseModel.pallets.keys():
-            palletsPositionsValues.append({"x": x,
+            palletsPositionsValues.append({"id": count,
+                                           "x": x,
                                            "y": 0,
                                            "z": y,
                                            "value": warehouseModel.pallets[
                                             (x, y)]})
+            count += 1
         return jsonify({'positions': palletsPositionsValues})
 
 
