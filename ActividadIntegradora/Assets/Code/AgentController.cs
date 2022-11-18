@@ -107,7 +107,7 @@ public class AgentController : MonoBehaviour
 
     public GameObject pallet, robot, caja, floor;
     public int NBoxes, width, height;
-    public float timeToUpdate = 1.0f;
+    public float timeToUpdate;
     private float timer, dt;
 
     // Start is called before the first frame update
