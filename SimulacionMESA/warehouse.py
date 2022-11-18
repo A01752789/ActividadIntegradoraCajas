@@ -5,6 +5,13 @@ from mesa.space import MultiGrid
 from mesa.time import SimultaneousActivation
 
 
+def all_pallets_full(model):
+    for value in model.pallets.values():
+        if value < 5:
+            return False
+    return True
+
+
 # Robot agent
 class Robot(Agent):
     def __init__(self, unique_id, model):
@@ -15,6 +22,7 @@ class Robot(Agent):
         self.next_color = None
         self.has_box = False
         self.next_state = None
+        self.objective_box = None
 
     def get_neighbors_content(self):
         """Facilitates the filtering and detection
@@ -148,15 +156,57 @@ class Robot(Agent):
 
     def pick_up_box(self, box):
         """Picks up a box"""
+        self.model.picked_objective_boxes.append(box[-1])
+        # if box[-1] in self.model.objective_boxes:
+        #     self.model.objective_boxes.remove(box[-1])
         self.model.initial_boxes[box[-1]] = [self.unique_id, self.pos]
         self.next_state = self.pos
         self.has_box = True
 
+    def call_for_help(self, box_position):
+        if box_position not in self.model.objective_boxes_added:
+            self.model.objective_boxes.append(box_position)
+            self.model.objective_boxes_added.append(box_position)
+
+    def closest_cell_objetive_box(self, neighbor):
+        """Determines the closest cell to
+        objective box"""
+        x1, y1 = neighbor[-1]
+        distance = math.sqrt(((self.objective_box[0] - x1)**2) +
+                             ((self.objective_box[1] - y1)**2))
+        return distance
+
+    def move_to_objective_box(self, neighbors_content):
+        min_distance = float('inf')
+        shortest_path = self.pos
+        for neighbor in neighbors_content:
+            if neighbor[0] == 'empty' and neighbor[-1] not in \
+                    self.model.reserved_cells:
+                distance = self.closest_cell_objetive_box(neighbor)
+                if distance < min_distance:
+                    min_distance = distance
+                    shortest_path = neighbor[-1]
+        if shortest_path:
+            # Returns best neighbor cell
+            self.model.reserved_cells.append(shortest_path)
+            self.next_state = shortest_path
+            return shortest_path
+        else:
+            # There is no best neighbor cell
+            self.next_state = self.pos
+            return self.pos
+
     def step(self):
+        if self.objective_box in self.model.picked_objective_boxes:
+            self.objective_box = None
         """Hierarchy of steps in robot"""
         # Get a list of neighbors with the content of each cell (List / [])
         neighbors_content = self.get_neighbors_content()
+        # Check whether there is a box in the neighbors (Content / False)
+        is_there_a_box = self.is_there_a_box(neighbors_content)
         if self.has_box:
+            if is_there_a_box:
+                self.call_for_help(is_there_a_box[-1])
             # Checks whether agent is beside a pallet (Coordinate / False)
             can_drop_it = self.can_drop_it(neighbors_content)
             if can_drop_it:
@@ -166,13 +216,22 @@ class Robot(Agent):
                 # Move to a pallet
                 self.move_with_box(neighbors_content)
         else:
-            # Check whether there is a box in the neighbors (Content / False)
-            is_there_a_box = self.is_there_a_box(neighbors_content)
             if is_there_a_box:
+                if self.objective_box:
+                    if self.objective_box not in \
+                            self.model.picked_objective_boxes:
+                        self.model.objective_boxes.append(self.objective_box)
+                    self.objective_box = None
                 self.pick_up_box(is_there_a_box)
             else:
-                # Aparta tu movimiento
-                self.move_without_box(neighbors_content)
+                if self.model.objective_boxes and not self.objective_box:
+                    self.objective_box = self.model.objective_boxes.pop()
+                    self.move_to_objective_box(neighbors_content)
+                elif self.objective_box:
+                    self.move_to_objective_box(neighbors_content)
+                else:
+                    # Aparta tu movimiento
+                    self.move_without_box(neighbors_content)
 
         # Changes color for visualization
         if self.has_box:
@@ -278,9 +337,13 @@ class WarehouseModel(Model):
         self.reserved_boxes = []
         self.pallets = {}
 
+        self.objective_boxes = []
+        self.objective_boxes_added = []
+        self.picked_objective_boxes = []
+
         # Calculate the number of pallets
         num_pallets = math.ceil(NAgents / 5)
-        corners = [(0, 0), (0, 14), (14, 14), (14, 0)]
+        corners = [(0, 0), (0, height-1), (width-1, height-1), (width-1, 0)]
 
         # Assing number of pallets
         for count in range(num_pallets):
@@ -343,5 +406,6 @@ class WarehouseModel(Model):
 
     def step(self):
         # Model step
-        print(self.pallets)
+        if all_pallets_full(self):
+            return
         self.schedule.step()
