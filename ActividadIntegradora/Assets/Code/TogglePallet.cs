@@ -5,7 +5,6 @@ using UnityEngine;
 public class TogglePallet : MonoBehaviour
 {
     public GameObject caja1, caja2, caja3, caja4, caja5;
-    private int contador;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,12 +13,10 @@ public class TogglePallet : MonoBehaviour
         caja3.SetActive(false);
         caja4.SetActive(false);
         caja5.SetActive(false);
-        contador = 0;
     }
 
-    public void AddBox()
+    public void AddBox(int contador)
     {
-        contador += 1;
         if (contador == 1)
         {
             caja1.SetActive(true);

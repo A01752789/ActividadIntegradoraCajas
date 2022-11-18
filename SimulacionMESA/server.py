@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from warehouse import *
 
 # Size of the board:
-number_agents = 1
+NAgents = 1
 width = 28
 height = 28
 warehouseModel = None
@@ -19,15 +19,15 @@ def helloWorld():
 
 @app.route('/init', methods=['POST', 'GET'])
 def initModel():
-    global currentStep, warehouseModel, number_agents, width, height
+    global currentStep, warehouseModel, NAgents, width, height
 
     if request.method == 'POST':
-        # number_agents = int(request.form.get('NAgents'))
+        NAgents = int(request.form.get('NAgents'))
         width = int(request.form.get('width'))
         height = int(request.form.get('height'))
         currentStep = 0
 
-        warehouseModel = WarehouseModel(width, height)
+        warehouseModel = WarehouseModel(width, height, NAgents)
 
         return jsonify({"message": "Parameters received, model initiated."})
 

@@ -124,6 +124,7 @@ public class AgentController : MonoBehaviour
         robots = new Dictionary<string, GameObject>();
         pallets = new Dictionary<string, GameObject>();
 
+        NAgents = 10;
         width = 15;
         height = 15;
 
@@ -259,6 +260,7 @@ public class AgentController : MonoBehaviour
                 else
                 {
                     // Si se le añade una caja al pallet en mesa, añadir caja en prefab
+                    pallets[tarima.id].GetComponent<TogglePallet>().AddBox(tarima.value);
                 }
             }
             if (!startedPallet) startedPallet = true;
