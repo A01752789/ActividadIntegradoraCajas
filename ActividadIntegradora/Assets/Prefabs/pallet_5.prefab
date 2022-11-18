@@ -172,6 +172,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45dedd2540a2bce4485bb83844de579b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  caja1: {fileID: 402518693314186251}
+  caja2: {fileID: 1994791583986579074}
+  caja3: {fileID: 4906179977391130460}
+  caja4: {fileID: 5434375194427554947}
+  caja5: {fileID: 6564493575193255429}
 --- !u!1 &553030068160707061
 GameObject:
   m_ObjectHideFlags: 0
@@ -4272,7 +4277,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_Name
-      value: Wooden Crate
+      value: Caja3
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_RootOrder
@@ -4332,6 +4337,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+--- !u!1 &4906179977391130460 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+  m_PrefabInstance: {fileID: 2548966436995016086}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5718885563008294374 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
@@ -4346,7 +4356,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_Name
-      value: Wooden Crate
+      value: Caja4
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_RootOrder
@@ -4411,6 +4421,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
   m_PrefabInstance: {fileID: 3180448126020296265}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5434375194427554947 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+  m_PrefabInstance: {fileID: 3180448126020296265}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4346039518605425871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4420,7 +4435,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_Name
-      value: Wooden Crate
+      value: Caja5
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_RootOrder
@@ -4485,6 +4500,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
   m_PrefabInstance: {fileID: 4346039518605425871}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6564493575193255429 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+  m_PrefabInstance: {fileID: 4346039518605425871}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7124685077207920321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4494,7 +4514,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_Name
-      value: Wooden Crate (1)
+      value: Caja1
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_RootOrder
@@ -4554,6 +4574,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+--- !u!1 &402518693314186251 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+  m_PrefabInstance: {fileID: 7124685077207920321}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1071249999549044401 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
@@ -4568,7 +4593,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_Name
-      value: Wooden Crate
+      value: Caja2
       objectReference: {fileID: 0}
     - target: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
       propertyPath: m_RootOrder
@@ -4631,5 +4656,10 @@ PrefabInstance:
 --- !u!4 &1217446125150481464 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7782835224190335088, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
+  m_PrefabInstance: {fileID: 9000184002757661768}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1994791583986579074 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
   m_PrefabInstance: {fileID: 9000184002757661768}
   m_PrefabAsset: {fileID: 0}

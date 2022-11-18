@@ -258,7 +258,7 @@ public class AgentController : MonoBehaviour
                 }
                 else
                 {
-                    
+                    // Si se le añade una caja al pallet en mesa, añadir caja en prefab
                 }
             }
             if (!startedPallet) startedPallet = true;
