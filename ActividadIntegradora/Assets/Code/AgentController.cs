@@ -103,10 +103,10 @@ public class AgentController : MonoBehaviour
     Dictionary<string, Vector3> prevPositions, currPositions;
 
     bool updated = false, started = false;
-    bool startedBox = false, startedPallet = false; 
+    bool startedBox = false, startedPallet = false;
 
     public GameObject pallet, robot, caja, floor;
-    public int NAgents, width, height;
+    public int NBoxes, width, height;
     public float timeToUpdate = 1.0f;
     private float timer, dt;
 
@@ -124,12 +124,12 @@ public class AgentController : MonoBehaviour
         robots = new Dictionary<string, GameObject>();
         pallets = new Dictionary<string, GameObject>();
 
-        NAgents = 10;
-        width = 15;
-        height = 15;
+        // NBoxes = 10;
+        // width = 15;
+        // height = 15;
 
+        // Escalar piso
         floor.transform.localScale = new Vector3((float)(width + 1) / 10, 1, (float)(height + 1) / 10);
-        //floor.transform.localScale = new Vector3(width, 1, height);
         floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 0, (float)height / 2 - 0.5f);
 
         timer = timeToUpdate;
@@ -142,7 +142,7 @@ public class AgentController : MonoBehaviour
     {
         WWWForm form = new WWWForm();
 
-        form.AddField("NAgents", NAgents.ToString());
+        form.AddField("NAgents", (NBoxes).ToString());
         form.AddField("width", (width).ToString());
         form.AddField("height", (height).ToString());
 
