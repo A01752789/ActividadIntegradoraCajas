@@ -1,3 +1,4 @@
+import math
 from math import sqrt
 from mesa import Agent, Model, DataCollector
 from mesa.space import MultiGrid
@@ -58,7 +59,8 @@ class Robot(Agent):
     def can_drop_it(self, neighbors_content):
         for neighbor in neighbors_content:
             if neighbor[0] == 'pallet':
-                return neighbor[-1]
+                if neighbor[1] < 5:
+                    return neighbor[-1]
         return False
 
     def drop_box(self, pallet):
@@ -74,7 +76,10 @@ class Robot(Agent):
                 if distance < min_distance:
                     closest_pallet = [key, neighbor[-1], distance]
                     min_distance = distance
-        return closest_pallet
+        if closest_pallet:
+            return closest_pallet
+        else:
+            return False
 
     def move_with_box(self, neighbors_content):
         min_distance = [float('inf')]
@@ -82,8 +87,11 @@ class Robot(Agent):
             if neighbor[0] == 'empty' and neighbor[-1] not in \
                     self.model.reserved_cells:
                 distance = self.closest_pallet(neighbor)
-                if distance[-1] < min_distance[-1]:
-                    min_distance = distance
+                if distance:
+                    if distance[-1] < min_distance[-1]:
+                        min_distance = distance
+                else:
+                    min_distance = [0, self.pos]
         self.model.reserved_cells.append(min_distance[1])
         return min_distance[1]
 
@@ -198,21 +206,44 @@ class Box(Agent):
 
 # Warehouse model
 class WarehouseModel(Model):
-    def __init__(self, width, height):
+    def __init__(self, width, height, NAgents):
         # Standard variables
         self.grid = MultiGrid(width, height, False)
         self.schedule = SimultaneousActivation(self)
         self.running = True
-
-        # Agent variables
-        self.pallets = {(0, 0): 0,
-                        (14, 14): 0,
-                        (0, 14): 0,
-                        (14, 0): 0}
         self.picked_boxes = {}
         self.reserved_cells = []
         self.initial_boxes = {}
         self.reserved_boxes = []
+
+        # Calculate the number of pallets
+        num_pallets = math.ceil(NAgents / 5)
+        corners = [(0, 0), (0, 14), (14, 14), (14, 0)]
+        self.pallets = {}
+
+        # Assing number of pallets
+        count = 0
+        while count < num_pallets:
+            if count < 4:
+                self.pallets[corners[count]] = 0
+            else:
+                if count % 2 == 0:
+                    corner = self.random.choice([0, 2])
+                    y = corners[corner][1]
+                    while True:
+                        x = self.random.randrange(self.grid.width)
+                        if (x, y) not in self.pallets:
+                            self.pallets[(x, y)] = 0
+                            break
+                else:
+                    corner = self.random.choice([1, 3])
+                    x = corners[corner][0]
+                    while True:
+                        y = self.random.randrange(self.grid.height)
+                        if (x, y) not in self.pallets:
+                            self.pallets[(x, y)] = 0
+                            break
+            count += 1
 
         unique_id = 0
         occupied_cells = {}
@@ -232,7 +263,7 @@ class WarehouseModel(Model):
             unique_id += 1
 
         # Create box agent
-        for _ in range(20):
+        for _ in range(NAgents):
             box = Box((unique_id), self)
             while True:
                 # Choose random cell
@@ -248,4 +279,5 @@ class WarehouseModel(Model):
 
     def step(self):
         # Model step
+        print(self.pallets)
         self.schedule.step()

@@ -30,10 +30,11 @@ def agent_portrayal(agent):
 
 ancho = 15
 alto = 15
+NAgents = 54
 grid = CanvasGrid(agent_portrayal, ancho, alto, 750, 750)
 server = ModularServer(WarehouseModel,
                        [grid],
                        "Warehouse Model",
-                       {"width": ancho, "height": alto})
+                       {"width": ancho, "height": alto, "NAgents": NAgents})
 server.port = 8521
 server.launch()
