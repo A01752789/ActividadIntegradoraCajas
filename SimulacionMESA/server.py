@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from warehouse import *
 
 # Size of the board:
-number_agents = 1
+NAgents = 1
 width = 28
 height = 28
 warehouseModel = None
@@ -19,15 +19,15 @@ def helloWorld():
 
 @app.route('/init', methods=['POST', 'GET'])
 def initModel():
-    global currentStep, warehouseModel, number_agents, width, height
+    global currentStep, warehouseModel, NAgents, width, height
 
     if request.method == 'POST':
-        # number_agents = int(request.form.get('NAgents'))
+        NAgents = int(request.form.get('NAgents'))
         width = int(request.form.get('width'))
         height = int(request.form.get('height'))
         currentStep = 0
 
-        warehouseModel = WarehouseModel(width, height)
+        warehouseModel = WarehouseModel(width, height, NAgents)
 
         return jsonify({"message": "Parameters received, model initiated."})
 
@@ -38,7 +38,7 @@ def getRobots():
 
     if request.method == 'GET':
         robotPositions = [{"id": str(obj.unique_id),
-                           "x": x, "y": 1, "z": z,
+                           "x": x, "y": 0, "z": z,
                            "hasBox": obj.has_box}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Robot)]
@@ -50,10 +50,30 @@ def getBoxes():
     global warehouseModel
 
     if request.method == 'GET':
-        boxesPositions = [{"id": str(obj.unique_id), "x": x, "y": 1, "z": z}
+        boxesPositions = [{"id": str(obj.unique_id),
+                           "x": x, "y": 0, "z": z,
+                           "picked_up": obj.picked_up}
                           for (a, x, z) in warehouseModel.grid.coord_iter()
                           for obj in a if isinstance(obj, Box)]
         return jsonify({'positions': boxesPositions})
+
+
+@app.route('/getPallets', methods=['GET'])
+def getPallets():
+    global warehouseModel
+
+    if request.method == 'GET':
+        palletsPositionsValues = []
+        count = 0
+        for x, y in warehouseModel.pallets.keys():
+            palletsPositionsValues.append({"id": count,
+                                           "x": x,
+                                           "y": 0,
+                                           "z": y,
+                                           "value": warehouseModel.pallets[
+                                            (x, y)]})
+            count += 1
+        return jsonify({'positions': palletsPositionsValues})
 
 
 @app.route('/update', methods=['GET'])

@@ -17,6 +17,9 @@ def agent_portrayal(agent):
     elif agent.color == 2:
         portrayal["Color"] = "red"
         portrayal["Layer"] = 0
+    elif agent.color == 3:
+        portrayal["Color"] = "green"
+        portrayal["Layer"] = 0
     else:
         portrayal["Color"] = "grey"
         portrayal["Layer"] = 1
@@ -27,10 +30,11 @@ def agent_portrayal(agent):
 
 ancho = 15
 alto = 15
+NAgents = 54
 grid = CanvasGrid(agent_portrayal, ancho, alto, 750, 750)
 server = ModularServer(WarehouseModel,
                        [grid],
                        "Warehouse Model",
-                       {"width": ancho, "height": alto})
+                       {"width": ancho, "height": alto, "NAgents": NAgents})
 server.port = 8521
 server.launch()
