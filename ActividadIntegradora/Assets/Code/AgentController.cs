@@ -107,7 +107,7 @@ public class AgentController : MonoBehaviour
 
     public GameObject pallet, robot, caja, floor;
     public int NAgents, width, height;
-    public float timeToUpdate = 5.0f;
+    public float timeToUpdate = 1.0f;
     private float timer, dt;
 
     // Start is called before the first frame update
@@ -157,8 +157,8 @@ public class AgentController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Configuration upload complete!");
-            Debug.Log("Getting Agents positions");
+            //Debug.Log("Configuration upload complete!");
+            //Debug.Log("Getting Agents positions");
             StartCoroutine(GetRobotsData());
             StartCoroutine(GetBoxesData());
             StartCoroutine(GetPalletsData());
@@ -219,7 +219,7 @@ public class AgentController : MonoBehaviour
         {
             boxesData = JsonUtility.FromJson<BoxesData>(www.downloadHandler.text);
 
-            Debug.Log(boxesData.positions);
+            //Debug.Log(boxesData.positions);
 
             foreach(BoxData cajita in boxesData.positions)
             {
