@@ -474,10 +474,10 @@ MonoBehaviour:
   robot: {fileID: 7285258184819388933, guid: b3869b3fab4fe52469a58ce7365b1e70, type: 3}
   caja: {fileID: 7442761102958748362, guid: ec279c21ff6936c4895d8f914f966b79, type: 3}
   floor: {fileID: 483773661}
-  NBoxes: 8
-  width: 10
-  height: 10
-  timeToUpdate: 0.5
+  NBoxes: 15
+  width: 15
+  height: 15
+  timeToUpdate: 0.1
 --- !u!4 &1105124147
 Transform:
   m_ObjectHideFlags: 0
