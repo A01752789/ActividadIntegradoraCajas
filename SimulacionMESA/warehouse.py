@@ -357,7 +357,7 @@ class WarehouseModel(Model):
                     y = corners[corner][1]
                     while True:
                         # Move in x position
-                        x = self.random.randrange(self.grid.width)
+                        x = self.random.randrange(2, self.grid.width-3)
                         if (x, y) not in self.pallets:
                             self.pallets[(x, y)] = 0
                             break
@@ -367,7 +367,7 @@ class WarehouseModel(Model):
                     x = corners[corner][0]
                     while True:
                         # Choose in y position
-                        y = self.random.randrange(self.grid.height)
+                        y = self.random.randrange(2, self.grid.height-3)
                         if (x, y) not in self.pallets:
                             self.pallets[(x, y)] = 0
                             break
@@ -379,8 +379,8 @@ class WarehouseModel(Model):
             robot = Robot((unique_id), self)
             while True:
                 # Choose random cell
-                x = self.random.randrange(self.grid.width)
-                y = self.random.randrange(self.grid.height)
+                x = self.random.randrange(2, self.grid.width-3)
+                y = self.random.randrange(2, self.grid.height-3)
                 if (x, y) not in occupied_cells and \
                         (x, y) not in self.pallets:
                     self.grid.place_agent(robot, (x, y))
@@ -394,8 +394,8 @@ class WarehouseModel(Model):
             box = Box((unique_id), self)
             while True:
                 # Choose random cell
-                x = self.random.randrange(self.grid.width)
-                y = self.random.randrange(self.grid.height)
+                x = self.random.randrange(2, self.grid.width-3)
+                y = self.random.randrange(2, self.grid.height-3)
                 if (x, y) not in occupied_cells and \
                         (x, y) not in self.pallets:
                     self.grid.place_agent(box, (x, y))
