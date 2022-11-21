@@ -1,11 +1,27 @@
+"""
+This programs helps to model and simulate a warehouse
+where the objective of the robots is to pick up all the
+boxes and put them in pallets
+
+Aleny Sofia Arévalo Magdaleno |  A01751272
+Luis Humberto Romero Pérez | A01752789
+Valeria Martínez Silva | A01752167
+Pablo González de la Parra | A01745096
+
+Created: 14 / 11 / 2022
+"""
+
 import math
 import random
-from mesa import Agent, Model
+from mesa import Agent, Model, DataCollector
 from mesa.space import MultiGrid
 from mesa.time import SimultaneousActivation
 
 
 def all_pallets_full(model):
+    """Determines whether all pallets are full
+    Parameters: model -> Model of the multiagent system
+    Return value: bool -> If all pallets are full"""
     for value in model.pallets.values():
         if value < 5:
             return False
@@ -23,10 +39,14 @@ class Robot(Agent):
         self.has_box = False
         self.next_state = None
         self.objective_box = None
+        self.moves = 0
 
     def get_neighbors_content(self):
         """Facilitates the filtering and detection
-        of content in neighboring cells"""
+        of content in neighboring cells
+        Parameters: None
+        Return value: neighbors_content -> Content
+        of all neighboring cells"""
         neighbors_content = []
         # Neighbors
         neighbors = self.model.grid.get_neighborhood(
@@ -67,7 +87,10 @@ class Robot(Agent):
 
     def can_drop_it(self, neighbors_content):
         """Checks whether there is a pallet in neighbor
-        cell and if it isn't full"""
+        cell and if it isn't full
+        Parameters: neighbors_content -> Content
+        of all neighboring cells
+        Return value: coordinate -> If there is a pallet"""
         for neighbor in neighbors_content:
             if neighbor[0] == 'pallet':
                 # Number of boxes in pallet
@@ -78,7 +101,10 @@ class Robot(Agent):
 
     def drop_box(self, pallet_coordinate):
         """Drops a box, sums the number of
-        boxes in a pallet"""
+        boxes in a pallet
+        Parameters: pallet_coordinate -> Coordinate of a
+        pallet
+        Return value: None"""
         self.model.pallets[pallet_coordinate] += 1
         self.next_state = self.pos
         self.has_box = False
@@ -86,7 +112,9 @@ class Robot(Agent):
 
     def closest_pallet(self, neighbor):
         """Determines the closest non full
-        pallet of a neighbor cell"""
+        pallet of a neighbor cell
+        Parameters: neighbor -> A single neighbor cell
+        Return value: closest_pallet -> Info. of a pallet"""
         x1, y1 = neighbor[-1]
         min_distance = float('inf')
         closest_pallet = 0
@@ -107,7 +135,10 @@ class Robot(Agent):
 
     def move_with_box(self, neighbors_content):
         """Determines the next position that is closest
-        to a non full pallet"""
+        to a non full pallet
+        Parameters: neighbors_content -> Content
+        of all neighboring cells
+        Return value: shortest_path -> Best neighbor cell"""
         min_distance = float('inf')
         shortest_path = []
         for neighbor in neighbors_content:
@@ -133,7 +164,10 @@ class Robot(Agent):
 
     def is_there_a_box(self, neighbors_content):
         """Checks whether there is a single
-        box in neighbor cell"""
+        box in neighbor cell
+        Parameters: neighbors_content -> Content
+        of all neighboring cells
+        Return value: neighbor -> Cell with a box"""
         for neighbor in neighbors_content:
             if neighbor[0] == 'box' and neighbor[-1] not \
                     in self.model.reserved_boxes:
@@ -142,20 +176,26 @@ class Robot(Agent):
         return False
 
     def move_without_box(self, neighbors_content):
-        """Moves to a random empty cell"""
+        """Moves to a random empty cell
+        Parameters: neighbors_content -> Content
+        of all neighboring cells
+        Return value: bool -> If robot can move"""
         random.shuffle(neighbors_content)
         for neighbor in neighbors_content:
             if neighbor[0] == 'empty' and neighbor[-1] not in \
                     self.model.reserved_cells:
                 self.model.reserved_cells.append(neighbor[-1])
                 self.next_state = neighbor[-1]
+                self.moves += 1
                 return True
         # Can't move anywhere
         self.next_state = self.pos
         return False
 
     def pick_up_box(self, box):
-        """Picks up a box"""
+        """Picks up a box
+        Parameters: box -> Coordinate of cell with box
+        Return value: None"""
         self.model.picked_objective_boxes.append(box[-1])
         # if box[-1] in self.model.objective_boxes:
         #     self.model.objective_boxes.remove(box[-1])
@@ -164,22 +204,35 @@ class Robot(Agent):
         self.has_box = True
 
     def call_for_help(self, box_position):
+        """Adds coordinate of box for empty robots to mark
+        them as their objective
+        Parameters: box_position -> Coordinate of cell with box
+        Return value: None"""
         if box_position not in self.model.objective_boxes_added:
             self.model.objective_boxes.append(box_position)
             self.model.objective_boxes_added.append(box_position)
 
     def closest_cell_objetive_box(self, neighbor):
         """Determines the closest cell to
-        objective box"""
+        objective box
+        Parameters: neighbor -> Coordinate of cell with box
+        Return value: distance -> Distance between a neighbor
+        and a cell with box"""
         x1, y1 = neighbor[-1]
         distance = math.sqrt(((self.objective_box[0] - x1)**2) +
                              ((self.objective_box[1] - y1)**2))
         return distance
 
     def move_to_objective_box(self, neighbors_content):
+        """Determines the shortest path to box from
+        and empty robot agent. Similar to move_with_box
+        Parameters: neighbors_content -> Content
+        of all neighboring cells
+        Return value: shortest_path -> Best next move"""
         min_distance = float('inf')
         shortest_path = self.pos
         for neighbor in neighbors_content:
+            # Only considers empty cells
             if neighbor[0] == 'empty' and neighbor[-1] not in \
                     self.model.reserved_cells:
                 distance = self.closest_cell_objetive_box(neighbor)
@@ -187,6 +240,7 @@ class Robot(Agent):
                     min_distance = distance
                     shortest_path = neighbor[-1]
         if shortest_path:
+            self.moves += 1
             # Returns best neighbor cell
             self.model.reserved_cells.append(shortest_path)
             self.next_state = shortest_path
@@ -261,16 +315,21 @@ class Box(Agent):
         self.agent_details = None
         self.next_state = None
         self.picked_up = False
+        self.moves = 0
 
     def is_picked_up(self):
-        """Checks whether a box is picked up"""
+        """Checks whether a box is picked up
+        Parameters: None
+        Return value: bool -> Whether or not is picked up"""
         if self.pos in self.model.initial_boxes:
             return True
         else:
             return False
 
     def get_picked_up(self):
-        """Moves box to agent position"""
+        """Moves box to agent position
+        Parameters: None
+        Return value: None"""
         self.agent_details = self.model.initial_boxes[self.pos]
         del self.model.initial_boxes[self.pos]
         self.model.picked_boxes[self.agent_details[0]] = \
@@ -279,13 +338,18 @@ class Box(Agent):
         self.picked_up = True
 
     def stay_still(self):
-        """Stays still"""
+        """Stays still
+        Parameters: None
+        Return value: None"""
         self.picked_up = False
         self.next_state = self.pos
 
     def move_with_agent(self):
-        """Moves to same position as agent"""
+        """Moves to same position as agent
+        Parameters: None
+        Return value: None"""
         self.picked_up = True
+        self.moves += 1
         self.next_state = self.model.picked_boxes[
             self.agent_details[0]]
 
@@ -404,8 +468,16 @@ class WarehouseModel(Model):
                     break
             unique_id += 1
 
+        # Statistics
+        self.datacollector = DataCollector(
+            agent_reporters={"Moves": "moves"})
+        self.time = 0
+
     def step(self):
         # Model step
         if all_pallets_full(self):
             return
+        else:
+            self.time += 1
+        self.datacollector.collect(self)
         self.schedule.step()
