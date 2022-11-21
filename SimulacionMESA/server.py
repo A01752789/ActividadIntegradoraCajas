@@ -19,6 +19,7 @@ width = 28
 height = 28
 warehouseModel = None
 currentStep = 0
+maxSteps = 0
 
 app = Flask("Warehouse")
 
@@ -36,10 +37,11 @@ def initModel():
     if request.method == 'POST':
         NAgents = int(request.form.get('NAgents'))
         width = int(request.form.get('width'))
+        maxSteps = int(request.form.get('maxSteps'))
         height = int(request.form.get('height'))
         currentStep = 0
 
-        warehouseModel = WarehouseModel(width, height, NAgents)
+        warehouseModel = WarehouseModel(width, height, NAgents, maxSteps)
 
         return jsonify({"message": "Parameters received, model initiated."})
 

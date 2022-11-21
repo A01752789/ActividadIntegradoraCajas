@@ -390,7 +390,7 @@ class Box(Agent):
 
 # Warehouse model
 class WarehouseModel(Model):
-    def __init__(self, width, height, NAgents):
+    def __init__(self, width, height, NAgents, maxSteps):
         # Standard variables
         self.grid = MultiGrid(width, height, False)
         self.schedule = SimultaneousActivation(self)
@@ -400,6 +400,7 @@ class WarehouseModel(Model):
         self.initial_boxes = {}
         self.reserved_boxes = []
         self.pallets = {}
+        self.maxSteps = maxSteps
 
         self.objective_boxes = []
         self.objective_boxes_added = []
@@ -475,7 +476,7 @@ class WarehouseModel(Model):
 
     def step(self):
         # Model step
-        if all_pallets_full(self):
+        if all_pallets_full(self) or self.time > self.maxSteps:
             return
         else:
             self.time += 1

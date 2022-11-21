@@ -22,7 +22,7 @@ MAX_STEPS = 1500
 
 # Calling the model [numAgents] amount of times
 for agent in NUM_AGENTS:
-    model = WarehouseModel(WIDTH, HEIGHT, agent)
+    model = WarehouseModel(WIDTH, HEIGHT, agent, MAX_STEPS)
 
     for _ in range(MAX_STEPS):
         model.step()
