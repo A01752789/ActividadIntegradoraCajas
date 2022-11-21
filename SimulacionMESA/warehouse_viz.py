@@ -1,3 +1,14 @@
+"""
+This programs helps to visualize the process of the multi-agent
+system in the web browser
+
+Aleny Sofia Arévalo Magdaleno |  A01751272
+Luis Humberto Romero Pérez | A01752789
+Valeria Martínez Silva | A01752167
+Pablo González de la Parra | A01745096
+
+Created: 14 / 11 / 2022
+"""
 
 from warehouse import *
 from mesa.visualization.modules import CanvasGrid
