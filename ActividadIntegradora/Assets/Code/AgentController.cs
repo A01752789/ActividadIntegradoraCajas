@@ -106,7 +106,7 @@ public class AgentController : MonoBehaviour
     bool startedBox = false, startedPallet = false;
 
     public GameObject pallet, robot, caja, floor;
-    public int NBoxes, width, height;
+    public int NBoxes, width, height, maxSteps;
     public float timeToUpdate;
     private float timer, dt;
 
@@ -145,6 +145,7 @@ public class AgentController : MonoBehaviour
         form.AddField("NAgents", (NBoxes).ToString());
         form.AddField("width", (width).ToString());
         form.AddField("height", (height).ToString());
+        form.AddField("maxSteps", (maxSteps).ToString());
 
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");

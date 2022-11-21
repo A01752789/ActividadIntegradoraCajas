@@ -476,7 +476,7 @@ class WarehouseModel(Model):
 
     def step(self):
         # Model step
-        if all_pallets_full(self) or self.time > self.maxSteps:
+        if all_pallets_full(self) or self.time >= self.maxSteps:
             return
         else:
             self.time += 1
