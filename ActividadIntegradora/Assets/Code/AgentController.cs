@@ -1,6 +1,7 @@
-    // TC2008B. Sistemas Multiagentes y Gr�ficas Computacionales
-// C# client to interact with Python. Based on the code provided by Sergio Ruiz.
-// Equipo 4, Noviembre 2022
+// TC2008B. Sistemas Multiagentes y Gráficas Computacionales
+// Código en C# que interactúa con el servidor en Python. Basado en el código de Sergio Ruiz.
+// Adaptado por Pablo González, Humberto Romero, Valeria Martínez y Aleny Arévalo
+// Última modificación 21 de Noviembre 2022
 
 using System;
 using System.Collections;
@@ -9,6 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
+// Clase del agente robot para inicializarlo
 [Serializable]
 public class RobotData
 {
@@ -35,6 +37,7 @@ public class RobotsData
 }
 
 
+// Clase del agente caja para inicializarlo
 [Serializable]
 public class BoxData
 {
@@ -60,6 +63,7 @@ public class BoxesData
     public BoxesData() => this.positions = new List<BoxData>();
 }
 
+// Clase del agente tarima para inicializarlo
 [Serializable]
 public class PalletData
 {
@@ -85,6 +89,7 @@ public class PalletsData
     public PalletsData() => this.positions = new List<PalletData>();
 }
 
+// Clase que controla el movimiento y visualización de los agentes
 public class AgentController : MonoBehaviour
 {
     // private string url = "https://agents.us-south.cf.appdomain.cloud/";
@@ -110,7 +115,6 @@ public class AgentController : MonoBehaviour
     public float timeToUpdate;
     private float timer, dt;
 
-    // Start is called before the first frame update
     void Start()
     {
         robotsData = new RobotsData();
@@ -124,11 +128,7 @@ public class AgentController : MonoBehaviour
         robots = new Dictionary<string, GameObject>();
         pallets = new Dictionary<string, GameObject>();
 
-        // NBoxes = 10;
-        // width = 15;
-        // height = 15;
-
-        // Escalar piso
+        // Escalar y posicionar piso
         floor.transform.localScale = new Vector3((float)(width + 1) / 10, 1, (float)(height + 1) / 10);
         floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 0, (float)height / 2 - 0.5f);
 
@@ -156,6 +156,7 @@ public class AgentController : MonoBehaviour
         {
             Debug.Log(www.error);
         }
+        // Empezar simulación si hay conexión exitosa
         else
         {
             //Debug.Log("Configuration upload complete!");
@@ -181,11 +182,13 @@ public class AgentController : MonoBehaviour
             {
                 Vector3 newAgentPosition = new Vector3(rob.x, rob.y, rob.z);
 
+                // Instanciar robots
                 if (!started)
                 {
                     prevPositions[rob.id] = newAgentPosition;
                     robots[rob.id] = Instantiate(robot, newAgentPosition, Quaternion.identity);
                 }
+                // Si el robot ya existe, modificar su comportamiento y apariencia
                 else
                 {
                     // Si tiene caja, cambiar prefab y quitar luz
@@ -224,13 +227,16 @@ public class AgentController : MonoBehaviour
 
             foreach(BoxData cajita in boxesData.positions)
             {
+                // Instanciar cajas
                 if (!startedBox)
                 {
                     Vector3 boxPosition = new Vector3(cajita.x, cajita.y, cajita.z);
                     boxes[cajita.id] = Instantiate(caja, boxPosition, Quaternion.identity);
                 }
+                // Si la caja ya existe, modificar su visibilidad de acuerdo a su estado
                 else
                 {
+                    // Si un robot tomó la caja, ya no se muestra en el plano
                     if(cajita.picked_up){
                         boxes[cajita.id].SetActive(false);
                     }
@@ -253,6 +259,7 @@ public class AgentController : MonoBehaviour
 
             foreach(PalletData tarima in palletsData.positions)
             {
+                // Instanciar tarimas
                 if (!startedPallet)
                 {
                     Vector3 palletPosition = new Vector3(tarima.x, tarima.y, tarima.z);
@@ -292,7 +299,8 @@ public class AgentController : MonoBehaviour
                 Vector3 direction = currentPosition - interpolated;
 
                 robots[rob.Key].transform.localPosition = interpolated;
-                if(direction != Vector3.zero) robots[rob.Key].transform.rotation = Quaternion.LookRotation(direction);
+                // Cambiar hacia dónde miran los robots dependiendo de su posición y dirección
+                if (direction != Vector3.zero) robots[rob.Key].transform.rotation = Quaternion.LookRotation(direction);
             }
         }
     }

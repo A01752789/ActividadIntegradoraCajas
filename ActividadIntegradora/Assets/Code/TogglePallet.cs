@@ -1,7 +1,13 @@
+// TC2008B. Sistemas Multiagentes y Gráficas Computacionales
+// Código en C# que modifica la visibilidad de un componente en unity.
+// Adaptado por Pablo González, Humberto Romero, Valeria Martínez y Aleny Arévalo
+// Última modificación 21 de Noviembre 2022
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Clase que modifica la cantidad de cajas sobre las tarimas
 public class TogglePallet : MonoBehaviour
 {
     public GameObject caja1, caja2, caja3, caja4, caja5;
